@@ -6,6 +6,7 @@ coverage/
 .env
 .env.*
 !.env.example
+!client/.env.local.example
 client/.env.local
 server/.env
 *.log
