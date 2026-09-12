@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { Scan } from "../models/Scan";
+import { Settings } from "../models/Settings";
 import { AuthenticatedRequest } from "../types";
 import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../middleware/errorHandler";
@@ -67,7 +68,9 @@ export const createScan = asyncHandler(async (req: AuthenticatedRequest, res: Re
   logger.audit("scan_started", { userId: req.user!.userId, scanId: scan.id, target, command: scan.command });
 
   try {
-    const { rawOutput, durationMs } = await runNmap(args);
+    const settings = await Settings.findOne({ user: req.user!.userId }).select("scanTimeoutMs");
+    const timeoutMs = Math.min(settings?.scanTimeoutMs ?? env.maxScanDurationMs, env.maxScanDurationMs);
+    const { rawOutput, durationMs } = await runNmap(args, timeoutMs);
     const { ports, hostUp, osGuess, latencyMs } = parseNmapOutput(rawOutput);
     const firewallDetected = ports.some((p) => p.state === "filtered");
     const riskScore = computeRiskScore(ports, firewallDetected);

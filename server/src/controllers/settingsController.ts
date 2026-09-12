@@ -22,7 +22,7 @@ export const updateSettings = asyncHandler(async (req: AuthenticatedRequest, res
         ...(defaultPortPreset && { defaultPortPreset }),
         ...(theme && { theme }),
         ...(notificationsEnabled !== undefined && { notificationsEnabled }),
-        ...(scanTimeoutMs && { scanTimeoutMs })
+        ...(scanTimeoutMs !== undefined && { scanTimeoutMs })
       }
     },
     { new: true, upsert: true }

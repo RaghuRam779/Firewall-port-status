@@ -91,13 +91,13 @@ export interface NmapRunResult {
   durationMs: number;
 }
 
-export function runNmap(args: string[]): Promise<NmapRunResult> {
+export function runNmap(args: string[], timeoutMs = env.maxScanDurationMs): Promise<NmapRunResult> {
   const start = Date.now();
   return new Promise((resolve, reject) => {
     execFile(
       env.nmapPath,
       args,
-      { timeout: env.maxScanDurationMs, maxBuffer: 10 * 1024 * 1024 },
+      { timeout: timeoutMs, maxBuffer: 10 * 1024 * 1024 },
       (error, stdout, stderr) => {
         const durationMs = Date.now() - start;
         if (error) {

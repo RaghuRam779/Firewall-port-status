@@ -4,7 +4,9 @@ import { AuthenticatedRequest } from "../types";
 import { asyncHandler } from "../utils/asyncHandler";
 
 export const getAnalytics = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const filter = req.user!.role === "admin" ? {} : { user: req.user!.userId };
+  const filter = req.user!.role === "admin"
+    ? { status: "completed" as const }
+    : { user: req.user!.userId, status: "completed" as const };
 
   const scans = await Scan.find(filter);
 

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { loginRequest, registerRequest, User } from "@/services/auth";
+import { fetchMe, loginRequest, registerRequest, User } from "@/services/auth";
 
 interface AuthContextValue {
   user: User | null;
@@ -21,15 +21,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const storedUser = window.localStorage.getItem("fpc_user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch {
-        window.localStorage.removeItem("fpc_user");
-      }
+    const token = window.localStorage.getItem("fpc_token");
+    if (!token) {
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    fetchMe()
+      .then((currentUser) => {
+        window.localStorage.setItem("fpc_user", JSON.stringify(currentUser));
+        setUser(currentUser);
+      })
+      .catch(() => {
+        window.localStorage.removeItem("fpc_token");
+        window.localStorage.removeItem("fpc_user");
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const persist = (token: string, u: User) => {

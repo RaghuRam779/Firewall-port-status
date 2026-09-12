@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { LegalNotice } from "@/components/LegalNotice";
 import { ScanProgress } from "@/components/ScanProgress";
 import { startScan, NewScanPayload } from "@/services/scan";
+import { getSettings } from "@/services/settings";
 
 const scanTypeOptions: { value: string; label: string }[] = [
   { value: "tcp_connect", label: "TCP Connect Scan" },
@@ -28,6 +29,16 @@ export default function NewScanPage() {
   const [usePn, setUsePn] = useState(false);
   const [authorized, setAuthorized] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const settingsApplied = useRef(false);
+
+  const { data: settings } = useQuery({ queryKey: ["settings"], queryFn: getSettings });
+
+  useEffect(() => {
+    if (!settings || settingsApplied.current) return;
+    setPortPreset(settings.defaultPortPreset as NewScanPayload["portPreset"]);
+    setScanTypes([settings.defaultScanType]);
+    settingsApplied.current = true;
+  }, [settings]);
 
   const mutation = useMutation({
     mutationFn: startScan,
