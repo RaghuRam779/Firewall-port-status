@@ -8,6 +8,12 @@
 ## 1) Frontend on Vercel
 Import the repo on Vercel and set **Root Directory** to `client`.
 
+For an existing Vercel project, open **Settings -> General -> Root Directory**, choose
+`client`, and save. In **Settings -> Build and Deployment**, use the Next.js framework,
+leave the output directory as the default, and redeploy with **Redeploy -> Clear cache and
+redeploy**. If the root directory is left blank, Vercel builds the repository root (which
+has no Next.js app entrypoint) and the deployed URL returns `404: NOT_FOUND`.
+
 Add this environment variable in Vercel:
 - `NEXT_PUBLIC_API_URL=https://YOUR-RENDER-SERVICE.onrender.com/api`
 
