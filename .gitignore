@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.next-dev/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+client/.env.local
+server/.env
+*.log
+wholenewprj.zip

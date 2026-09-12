@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: firewall-checker-api
+    runtime: docker
+    rootDir: server
+    dockerfilePath: ./Dockerfile
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /api/health
